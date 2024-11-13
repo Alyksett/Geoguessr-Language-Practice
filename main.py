@@ -10,12 +10,9 @@ def get_random_langage() -> Language:
 def subselect_passage(lang: Language):
     text = lang.text
     words = text.split(" ")
-    length =  len(words)
-    min_length = length//3
-    max_length = length//2
-    start = random.randint(0, length-max_length)
-    end = random.randint(min_length, max_length)
-    d = words[start:end + start]
+    number_words = 50
+    start = random.randint(0, len(words)-number_words-1)
+    d = words[start: start+number_words]
     return " ".join(d)
 
 def get_input(target:str):
@@ -39,10 +36,10 @@ def get_input(target:str):
                 guesses = -1
                 print(target)
                 break
-            case _ if guess != target.lower():
+            case _ if guess.lower() != target.lower():
                 guesses += 1
                 print(" " * 10 + "Incorrect")
-            case _ if guess == target.lower():
+            case _ if guess.lower() == target.lower():
                 print(" " * 10 + "Correct")
                 break
     return guesses, hints-1
@@ -52,7 +49,8 @@ def try_window(languages: list[Language]) ->list[Language]:
     long_res = []
     for l in languages:
         print("-"*60)
-        p = "\n".join([l.text[i:i+60] for i in range(0, len(l.text), 60)])
+        passage = subselect_passage(l)
+        p = "\n".join([l.text[i:i+60] for i in range(0, len(passage), 60)])
         print(p)
         print("-"*60)
         guesses, hints = get_input(target=l.language.lower())
