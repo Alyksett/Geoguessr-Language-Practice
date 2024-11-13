@@ -48,7 +48,7 @@ def try_window(languages: list[Language]) ->list[Language]:
     long_res = []
     for l in languages:
         print("-"*60)
-        p = ((" " * 10 )+ "\n").join([l.text[i:i+60] for i in range(0, len(l.text), 60)])
+        p = "\n".join([l.text[i:i+60] for i in range(0, len(l.text), 60)])
         print(p)
         print("-"*60)
         guesses, hints = get_input(target=l.language.lower(), text=l.text)
@@ -59,10 +59,9 @@ def try_window(languages: list[Language]) ->list[Language]:
     return res
 
 def main():
-    langs = languages
-    # random.shuffle(languages)
-                                                  # guesses, hint
-    # scores = {(langs[i].language for i in langs) : [0, 0]}
+    langs: list[Language] = languages
+    random.shuffle(languages)
+    scores = {(langs[i].language for i in langs) : 0}
     n = len(langs)
     k = 2
     low = 0
@@ -70,8 +69,11 @@ def main():
     for i in range(n-k+1):
         subset = langs[low:i+k]
         retries = try_window(subset)
-        
+        for r in retries:
+            scores[r.language] += 1
         while(retries):
+            for r in retries:
+                scores[r.language] += 1
             random.shuffle(retries)
             retries = try_window(retries)
         low = i+k
