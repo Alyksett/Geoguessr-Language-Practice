@@ -15,7 +15,7 @@ def subselect_passage(lang: Language):
     d = words[start: start+number_words]
     return " ".join(d)
 
-def get_input(target:str):
+def get_input(target:str, choices: list[Language]):
     guesses = 0
     hints = 1
     guess = ""
@@ -25,7 +25,7 @@ def get_input(target:str):
         match guess.lower():
             case "help":
                 print("===========")
-                print("\n".join([l.language for l in languages]))
+                print("\n".join([l.language for l in choices]))
                 print("===========")
                 continue
             case "hint":
@@ -44,16 +44,20 @@ def get_input(target:str):
                 break
     return guesses, hints-1
 
-def try_window(languages: list[Language]) ->list[Language]:
+def try_window(languages_: list[Language]) ->list[Language]:
     res = []
     long_res = []
-    for l in languages:
+    for l in languages_:
         print("-"*60)
         passage = subselect_passage(l)
         p = "\n".join([l.text[i:i+60] for i in range(0, len(passage), 60)])
         print(p)
         print("-"*60)
-        guesses, hints = get_input(target=l.language.lower())
+        choice_padding = random.sample(languages, 5)
+        choices = languages_
+        choices.extend(choice_padding)
+        
+        guesses, hints = get_input(target=l.language.lower(), choices=choices)
         if guesses > 0 or hints > 0:
             res.append(l)
         if guesses > 3:
