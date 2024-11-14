@@ -25,12 +25,12 @@ def get_input(target:str, choices: list[Language]):
         guess = input("What language is this: ")
         match guess.lower():
             case "help":
-                print("===========")
-                print("\n".join([l.language for l in choices]))
-                print("===========")
+                print("="*30)
+                print("\t" + "\n\t".join([l.language for l in choices]))
+                print("="*30)
                 continue
             case "hint":
-                print(" " * 10 + f"Hint: {target[0:hints]}")
+                print(f"\tHint: {target[0:hints]}")
                 hints += 1
                 continue
             case "idk":
@@ -39,10 +39,10 @@ def get_input(target:str, choices: list[Language]):
                 break
             case _ if guess.lower() != target.lower():
                 guesses += 1
-                print(" " * 10 + "Incorrect")
+                print("\tIncorrect")
                 continue
             case _ if guess.lower() == target.lower():
-                print(" " * 10 + "Correct")
+                print("\tCorrect")
                 break
     return guesses, hints-1
 
@@ -54,13 +54,11 @@ def try_window(languages_: list[Language]) ->list[Language]:
         passage = subselect_passage(l)
         print("\n".join([passage[i:i+60] for i in range(0, len(passage), 60)]))
         print("-"*60)
-        choice_padding = []
         choice_padding = random.sample(languages, 5)
         choices = copy(languages_)
         choices.extend(choice_padding)
+        choices=list(set(choices)) # remove duplicates
         guesses, hints = get_input(target=l.language.lower(), choices=choices)
-        choices = []
-        choice_padding = []
         if guesses > 0 or hints > 0:
             res.append(l)
         if guesses > 3:
@@ -79,9 +77,7 @@ def main():
     for i in range(n-k+1):
         subset = langs[low:i+k]
         retries = try_window(subset)
-        
         while(retries):
-            
             for r in retries:
                 scores[r.language] += 1
             random.shuffle(retries)
