@@ -58,6 +58,7 @@ def try_window(languages_: list[Language]) ->list[Language]:
         choices.extend(choice_padding)
         
         guesses, hints = get_input(target=l.language.lower(), choices=choices)
+        choices = []
         if guesses > 0 or hints > 0:
             res.append(l)
         if guesses > 3:
